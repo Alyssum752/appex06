@@ -1,7 +1,7 @@
 ---
 title: "Visualizing song lyrics"
-author: ""
-date: ""
+author: "Katelyn Chang"
+date: "02-13-2020"
 output: 
   html_document:
     toc: true
@@ -46,7 +46,20 @@ Add a variable for the artist and album, and don't forget to save these data
 frames for later use. 
 
 ```{r part-1-reading-data}
-
+ariana <- genius_album(
+  artist = "Ariana Grande", 
+  album = "thank you, next"
+  )
+ariana2 <- genius_album(
+  artist = "Ariana Grande", 
+  album = "Yours Truly"
+  )
+```
+```{r}
+ariana %>%
+  distinct(track_title)
+ariana2 %>%
+  distinct(track_title)
 ```
 
 
@@ -58,6 +71,26 @@ you expect from the albums? Create a visualization of these words for each
 album.
 
 ```{r part-2-cleanup-dataviz}
+ariana_lyrics <- ariana %>%
+  unnest_tokens(word, lyric)
+ariana2_lyrics <- ariana2 %>%
+  unnest_tokens(word, lyric)
+
+ariana_lyrics %>%
+  anti_join(get_stopwords(source = "smart")) %>%
+  count(word) %>%
+  arrange(desc(n))
+
+ariana2_lyrics %>%
+  anti_join(get_stopwords(source = "smart")) %>%
+  count(word) %>%
+  arrange(desc(n))
+
+ggplot(ariana_lyrics, aes(fct_reorder(word, n), n)) +
+    geom_col() +
+    coord_flip() + 
+    theme_minimal(base_size = 12) +
+    labs(title = "Frequency of 'thank u, next' lyrics", y = "", x = "")
 
 ```
 
